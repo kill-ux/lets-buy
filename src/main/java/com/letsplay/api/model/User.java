@@ -2,6 +2,7 @@ package com.letsplay.api.model;
 
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
+import org.springframework.data.mongodb.core.mapping.Field;
 
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
@@ -17,6 +18,7 @@ public class User {
     @Id
     private String id;
 
+    @Field("name")
     @NotBlank(message = "Name is required")
     private String name;
 
