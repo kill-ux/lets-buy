@@ -4,6 +4,8 @@ import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 import org.springframework.data.mongodb.core.mapping.Field;
 
+import com.letsplay.api.dto.RegisterRequest;
+
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import lombok.AllArgsConstructor;
@@ -30,4 +32,10 @@ public class User {
     private String password;
 
     private String role;
+
+    public User(RegisterRequest request){
+        name = request.name();
+        email = request.email();
+        password = request.password();
+    }
 }

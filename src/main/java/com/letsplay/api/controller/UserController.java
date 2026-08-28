@@ -1,5 +1,6 @@
 package com.letsplay.api.controller;
 
+import com.letsplay.api.dto.UserResponseDTO;
 import com.letsplay.api.model.User;
 import com.letsplay.api.service.UserService;
 import jakarta.validation.Valid;
@@ -21,20 +22,21 @@ public class UserController {
     }
 
     @GetMapping
-    public List<User> getAllUsers() {
-        return userService.findAll();
+    public List<UserResponseDTO> getAllUsers() {
+        return userService.findAllSafe();
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<User> getUserById(@PathVariable String id) {
-        return userService.findById(id)
+    public ResponseEntity<UserResponseDTO> getUserById(@PathVariable String id) {
+        return userService.findByIdSafe(id)
                 .map(ResponseEntity::ok)
                 .orElse(ResponseEntity.notFound().build());
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<User> updateUser(@PathVariable String id, @Valid @RequestBody User updated) {
+    public ResponseEntity<UserResponseDTO> updateUser(@PathVariable String id, @Valid @RequestBody User updated) {
         return userService.update(id, updated)
+                .map(UserResponseDTO::fromEntity)
                 .map(ResponseEntity::ok)
                 .orElse(ResponseEntity.notFound().build());
     }

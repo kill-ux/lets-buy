@@ -10,3 +10,6 @@ spring:
     username: ${MONGO_INITDB_ROOT_USERNAME}
     password: ${MONGO_INITDB_ROOT_PASSWORD}
     authentication-database: admin
+jwt:
+  secret: ${JWT_SECRET}
+  expiration-ms: 86400000
