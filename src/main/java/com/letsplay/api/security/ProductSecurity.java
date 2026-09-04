@@ -3,6 +3,7 @@ package com.letsplay.api.security;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import com.letsplay.api.exeptions.ResourceNotFoundException;
 import com.letsplay.api.repository.ProductRepository;
 
 /**
@@ -21,7 +22,7 @@ public class ProductSecurity {
         String currentUserId = SecurityUtils.getCurrentUserId();
         return productRepository.findById(productId)
                 .map(product -> product.getUserId().equals(currentUserId))
-                .orElse(false);
+                .orElseThrow(() -> new ResourceNotFoundException("Product not found with id: " + productId));
     }
 
     public boolean isOwnerOrAdmin(String productId) {

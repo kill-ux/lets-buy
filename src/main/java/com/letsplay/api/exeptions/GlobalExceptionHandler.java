@@ -8,6 +8,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authorization.AuthorizationDeniedException;
+import org.springframework.web.HttpRequestMethodNotSupportedException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
@@ -95,6 +96,18 @@ public class GlobalExceptionHandler {
         public ResponseEntity<Map<String, String>> handleNotFound(ResourceNotFoundException ex) {
                 return ResponseEntity.status(HttpStatus.NOT_FOUND)
                                 .body(Map.of("error", ex.getMessage()));
+        }
+
+        @ExceptionHandler(HttpRequestMethodNotSupportedException.class)
+        public ResponseEntity<ErrorResponse> handleMethodNotAllowed(
+                        HttpRequestMethodNotSupportedException ex, WebRequest request) {
+
+                ErrorResponse errorResponse = new ErrorResponse(
+                                HttpStatus.METHOD_NOT_ALLOWED.value(),
+                                "Method not allowed");
+                return ResponseEntity
+                                .status(HttpStatus.METHOD_NOT_ALLOWED)
+                                .body(errorResponse);
         }
 
         @ExceptionHandler(Exception.class)

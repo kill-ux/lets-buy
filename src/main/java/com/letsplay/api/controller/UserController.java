@@ -1,6 +1,7 @@
 package com.letsplay.api.controller;
 
 import com.letsplay.api.dto.UserResponseDTO;
+import com.letsplay.api.exeptions.ResourceNotFoundException;
 import com.letsplay.api.model.User;
 import com.letsplay.api.service.UserService;
 import jakarta.validation.Valid;
@@ -32,7 +33,7 @@ public class UserController {
     public ResponseEntity<UserResponseDTO> getUserById(@PathVariable String id) {
         return userService.findByIdSafe(id)
                 .map(ResponseEntity::ok)
-                .orElse(ResponseEntity.notFound().build());
+                .orElseThrow(() -> new ResourceNotFoundException("User not found with id: " + id));
     }
 
     @PutMapping("/{id}")
@@ -40,13 +41,13 @@ public class UserController {
         return userService.update(id, updated)
                 .map(UserResponseDTO::fromEntity)
                 .map(ResponseEntity::ok)
-                .orElse(ResponseEntity.notFound().build());
+                .orElseThrow(() -> new ResourceNotFoundException("User not found with id: " + id));
     }
 
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteUser(@PathVariable String id) {
         if (!userService.existsById(id)) {
-            return ResponseEntity.notFound().build();
+            throw new ResourceNotFoundException("User not found with id: " + id);
         }
         userService.deleteById(id);
         return ResponseEntity.noContent().build();
