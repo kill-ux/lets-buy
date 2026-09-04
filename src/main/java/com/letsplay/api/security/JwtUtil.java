@@ -8,6 +8,8 @@ import javax.crypto.SecretKey;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
+import com.letsplay.api.model.Role;
+
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.security.Keys;
@@ -28,7 +30,7 @@ public class JwtUtil {
         return Keys.hmacShaKeyFor(secret.getBytes());
     }
 
-    public String generateToken(String userId, String role) {
+    public String generateToken(String userId, Role role) {
         Date now = new Date();
         Date expiry = new Date(now.getTime() + expirationMs);
 
@@ -45,8 +47,9 @@ public class JwtUtil {
         return parseClaims(token).getSubject();
     }
 
-    public String extractRole(String token) {
-        return parseClaims(token).get("role", String.class);
+    public Role extractRole(String token) {
+        String roleStr = parseClaims(token).get("role", String.class);
+        return Role.valueOf(roleStr);
     }
 
     public boolean isTokenValid(String token) {

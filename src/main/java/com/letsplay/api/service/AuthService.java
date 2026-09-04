@@ -10,6 +10,7 @@ import org.springframework.stereotype.Service;
 import com.letsplay.api.dto.AuthResponse;
 import com.letsplay.api.dto.LoginRequest;
 import com.letsplay.api.dto.RegisterRequest;
+import com.letsplay.api.model.Role;
 import com.letsplay.api.model.User;
 import com.letsplay.api.security.JwtUtil;
 
@@ -38,7 +39,7 @@ public class AuthService {
         }
 
         User user = new User(request);
-        user.setRole("USER");
+        user.setRole(Role.USER);
 
         User saved = userService.register(user);
         return authResponse(saved.getId(), user.getRole());
@@ -55,7 +56,7 @@ public class AuthService {
         return authResponse(user.getId(), user.getRole());
     }
 
-    private AuthResponse authResponse(String id, String role) {
+    private AuthResponse authResponse(String id, Role role) {
         String token = jwtUtil.generateToken(id, role);
         return new AuthResponse(token, role);
     }

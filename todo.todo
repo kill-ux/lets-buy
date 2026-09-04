@@ -1,2 +1,3 @@
 add enum Role { USER, ADMIN }
 verfy size of data like password and so on
+@PostAuthrise
