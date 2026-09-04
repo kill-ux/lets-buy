@@ -25,13 +25,16 @@ public class User {
     @NotBlank(message = "Name is required")
     private String name;
 
+    @Field("email")
     @NotBlank(message = "Email is required")
     @Email(message = "Email must be valid")
     private String email;
 
+    @Field("password")
     @NotBlank(message = "Password is required")
     private String password;
 
+    @Field("role")
     @NotNull(message = "Role is required")
     private Role role;
 

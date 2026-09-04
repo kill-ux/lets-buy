@@ -13,6 +13,7 @@ import com.letsplay.api.exeptions.ResourceNotFoundException;
 import com.letsplay.api.model.Product;
 import com.letsplay.api.service.ProductService;
 
+import jakarta.annotation.security.PermitAll;
 import jakarta.validation.Valid;
 
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -32,11 +33,13 @@ public class ProductController {
         this.productService = productService;
     }
 
+    // @PermitAll 
     @GetMapping
     public List<Product> getAllProducts() {
         return productService.findAll();
     }
 
+    @PermitAll
     @GetMapping("/{id}")
     public ResponseEntity<Product> getProductById(@PathVariable String id) {
         return productService.findById(id)
