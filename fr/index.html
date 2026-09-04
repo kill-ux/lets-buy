@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    Hello World
+</body>
+<script>
+    
+async function getProducts() {
+  try {
+    const response = await fetch("localhost:8080/products");
+    
+    // Check if HTTP status is in the 200–299 range
+    if (!response.ok) {
+      throw new Error(`HTTP error! Status: ${response.status}`);
+    }
+
+    const data = await response.json();
+    console.log(data);
+    return data;
+  } catch (error) {
+    console.error("Failed to fetch products:", error);
+  }
+}
+
+getProducts();
+</script>
+</html>
