@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import com.letsplay.api.model.Product;
 import com.letsplay.api.repository.ProductRepository;
+import com.letsplay.api.security.SecurityUtils;
 
 @Service
 public class ProductService {
@@ -25,6 +26,7 @@ public class ProductService {
     }
 
     public Product save(Product product) {
+        product.setUserId(SecurityUtils.getCurrentUserId());
         return productRepository.save(product);
     }
 
@@ -32,6 +34,7 @@ public class ProductService {
         return productRepository.findById(id)
                 .map(existing -> {
                     updated.setId(existing.getId());
+                    updated.setUserId(existing.getUserId());
                     return productRepository.save(updated);
                 });
     }

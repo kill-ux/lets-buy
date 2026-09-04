@@ -5,14 +5,17 @@ import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.letsplay.api.exeptions.ResourceNotFoundException;
 import com.letsplay.api.model.Product;
 import com.letsplay.api.service.ProductService;
 
 import jakarta.validation.Valid;
 
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -38,7 +41,7 @@ public class ProductController {
     public ResponseEntity<Product> getProductById(@PathVariable String id) {
         return productService.findById(id)
                 .map(ResponseEntity::ok)
-                .orElse(ResponseEntity.notFound().build());
+                .orElseThrow(() -> new ResourceNotFoundException("Product not found with id: " + id));
     }
 
     @PostMapping
@@ -48,19 +51,20 @@ public class ProductController {
     }
 
     @PutMapping("/{id}")
+    @PreAuthorize("@productSecurity.isOwnerOrAdmin(#id)")
     public ResponseEntity<Product> updateProduct(@PathVariable String id, @Valid @RequestBody Product updated) {
         return productService.update(id, updated)
                 .map(ResponseEntity::ok)
-                .orElse(ResponseEntity.notFound().build());
+                .orElseThrow(() -> new ResourceNotFoundException("Product not found with id: " + id));
     }
 
+    @DeleteMapping("/{id}")
+    @PreAuthorize("@productSecurity.isOwnerOrAdmin(#id)")
     public ResponseEntity<Void> deleteProduct(@PathVariable String id) {
         if (!productService.existsById(id)) {
-            ResponseEntity.notFound().build();
+            throw new ResourceNotFoundException("Product not found with id: " + id);
         }
         productService.deleteById(id);
         return ResponseEntity.noContent().build();
     }
-
-
 }

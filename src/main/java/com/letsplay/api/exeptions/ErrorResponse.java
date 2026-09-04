@@ -18,7 +18,7 @@ public class ErrorResponse {
 
     public ErrorResponse(int status, String message) {
         this.status = status;
-        this.message = message;
+        this.message = message; 
     }
 
     public ErrorResponse(int status, String message, Map<String, String> validationErrors) {
@@ -26,3 +26,4 @@ public class ErrorResponse {
         this.validationErrors = validationErrors;
     }
 }
+
