@@ -2,8 +2,6 @@
 package com.letsplay.api.service;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.core.Authentication;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -22,15 +20,12 @@ public class AuthService {
     private final UserService userService;
     private final JwtUtil jwtUtil;
     private final PasswordEncoder passwordEncoder;
-    private final AuthenticationManager authenticationManager;
 
     @Autowired
-    public AuthService(UserService userService, JwtUtil jwtUtil, PasswordEncoder passwordEncoder,
-            AuthenticationManager authenticationManager) {
+    public AuthService(UserService userService, JwtUtil jwtUtil, PasswordEncoder passwordEncoder) {
         this.userService = userService;
         this.jwtUtil = jwtUtil;
         this.passwordEncoder = passwordEncoder;
-        this.authenticationManager = authenticationManager;
     }
 
     public AuthResponse register(RegisterRequest request) {

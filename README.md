@@ -7,3 +7,7 @@
 ```sh
 ./gradlew bootRun  
 ```
+
+```sh
+docker exec -it redis redis-cli -a passwordddddddddd
+```
