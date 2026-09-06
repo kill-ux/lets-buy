@@ -9,6 +9,7 @@ import com.letsplay.api.dto.RegisterRequest;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -18,11 +19,13 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @Document(collection = "users")
 public class User {
+
     @Id
     private String id;
 
     @Field("name")
     @NotBlank(message = "Name is required")
+    @Size(min = 2, max = 50, message = "Name must be between 2 and 50 characters")
     private String name;
 
     @Field("email")
@@ -32,13 +35,14 @@ public class User {
 
     @Field("password")
     @NotBlank(message = "Password is required")
+    @Size(min = 6, max = 100, message = "Password must be between 6 and 100 characters")
     private String password;
 
     @Field("role")
     @NotNull(message = "Role is required")
     private Role role;
 
-    public User(RegisterRequest request){
+    public User(RegisterRequest request) {
         name = request.name();
         email = request.email();
         password = request.password();
