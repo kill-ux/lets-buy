@@ -1,4 +1,4 @@
-package com.letsplay.api.exeptions;
+package com.letsplay.api.exceptions;
 
 import java.util.HashMap;
 import java.util.Map;

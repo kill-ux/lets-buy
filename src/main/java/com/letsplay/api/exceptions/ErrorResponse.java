@@ -1,7 +1,5 @@
-package com.letsplay.api.exeptions;
+package com.letsplay.api.exceptions;
 
-import java.time.LocalDateTime;
-import java.util.List;
 import java.util.Map;
 
 import lombok.Data;

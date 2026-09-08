@@ -2,6 +2,7 @@
 package com.letsplay.api.security;
 
 import java.util.Date;
+import java.util.Optional;
 
 import javax.crypto.SecretKey;
 
@@ -36,28 +37,31 @@ public class JwtUtil {
 
         return Jwts.builder()
                 .subject(userId)
-                .claim("role", role)
+                .claim("role", role.name())
                 .issuedAt(now)
                 .expiration(expiry)
                 .signWith(getSigningKey())
                 .compact();
     }
 
-    public String extractUserId(String token) {
-        return parseClaims(token).getSubject();
+    public String extractUserId(Claims claims) {
+        return claims.getSubject();
     }
 
-    public Role extractRole(String token) {
-        String roleStr = parseClaims(token).get("role", String.class);
+    public long extractIssuedAtEpochSeconds(Claims claims) {
+        return claims.getIssuedAt().toInstant().getEpochSecond();
+    }
+
+    public Role extractRole(Claims claims) {
+        String roleStr = claims.get("role", String.class);
         return Role.valueOf(roleStr);
     }
 
-    public boolean isTokenValid(String token) {
+    public Optional<Claims> isTokenValid(String token) {
         try {
-            parseClaims(token);
-            return true;
+            return Optional.of(parseClaims(token));
         } catch (Exception e) {
-            return false;
+            return Optional.empty();
         }
     }
 

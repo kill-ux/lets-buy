@@ -2,6 +2,8 @@ package com.letsplay.api.repository;
 
 import java.util.Optional;
 import org.springframework.data.mongodb.repository.MongoRepository;
+
+import com.letsplay.api.model.Role;
 import com.letsplay.api.model.User;
 
 /**
@@ -12,5 +14,5 @@ public interface UserRepository extends MongoRepository<User, String> {
 
     boolean existsByEmail(String email);
 
-    boolean existsByRole(String role);
+    boolean existsByRole(Role role);
 }

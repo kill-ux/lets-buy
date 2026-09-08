@@ -10,17 +10,20 @@ import org.springframework.stereotype.Service;
 import com.letsplay.api.dto.UserResponseDTO;
 import com.letsplay.api.model.User;
 import com.letsplay.api.repository.UserRepository;
+import com.letsplay.api.security.TokenBlacklistService;
 
 @Service
 public class UserService {
 
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
+    private final TokenBlacklistService tokenBlacklistService;
 
     @Autowired
-    public UserService(UserRepository userRepository, PasswordEncoder passwordEncoder) {
+    public UserService(UserRepository userRepository, PasswordEncoder passwordEncoder, TokenBlacklistService tokenBlacklistService) {
         this.userRepository = userRepository;
         this.passwordEncoder = passwordEncoder;
+        this.tokenBlacklistService = tokenBlacklistService;
     }
 
     public List<User> findAll() {
@@ -58,8 +61,19 @@ public class UserService {
     public Optional<User> update(String id, User updated) {
         return userRepository.findById(id)
                 .map(existing -> {
+                    if (!existing.getEmail().equals(updated.getEmail()) && userRepository.existsByEmail(updated.getEmail())) {
+                        throw new IllegalStateException("Email already in use");
+                    }
+                    boolean roleChanged = existing.getRole() != updated.getRole();
+                    boolean passwordChanged = !passwordEncoder.matches(updated.getPassword(), existing.getPassword());
+
                     updated.setId(existing.getId());
                     updated.setPassword(passwordEncoder.encode(updated.getPassword()));
+
+                    if (roleChanged || passwordChanged) {
+                        tokenBlacklistService.revokeAllTokensForUser(id);
+                    }
+
                     return userRepository.save(updated);
                 });
     }
@@ -70,5 +84,6 @@ public class UserService {
 
     public void deleteById(String id) {
         userRepository.deleteById(id);
+        tokenBlacklistService.revokeAllTokensForUser(id);
     }
 }

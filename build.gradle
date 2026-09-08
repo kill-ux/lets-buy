@@ -41,3 +41,8 @@ dependencies {
 tasks.named('test') {
 	useJUnitPlatform()
 }
+
+
+bootRun {
+    systemProperty 'spring.output.ansi.enabled', 'ALWAYS'
+}

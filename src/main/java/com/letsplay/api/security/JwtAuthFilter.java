@@ -3,6 +3,7 @@ package com.letsplay.api.security;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -13,6 +14,7 @@ import org.springframework.web.filter.OncePerRequestFilter;
 
 import com.letsplay.api.model.Role;
 
+import io.jsonwebtoken.Claims;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -23,11 +25,13 @@ import jakarta.servlet.http.HttpServletResponse;
  */
 @Component
 public class JwtAuthFilter extends OncePerRequestFilter {
-    private JwtUtil jwtUtil;
+    private final JwtUtil jwtUtil;
+    private final TokenBlacklistService tokenBlacklistService;
 
     @Autowired
-    public JwtAuthFilter(JwtUtil jwtUtil) {
+    public JwtAuthFilter(JwtUtil jwtUtil, TokenBlacklistService tokenBlacklistService) {
         this.jwtUtil = jwtUtil;
+        this.tokenBlacklistService = tokenBlacklistService;
     }
 
     @Override
@@ -38,14 +42,18 @@ public class JwtAuthFilter extends OncePerRequestFilter {
         if (authHeader != null && authHeader.startsWith("Bearer ")) {
             String token = authHeader.substring(7);
 
-            if (jwtUtil.isTokenValid(token)) {
-                String userId = jwtUtil.extractUserId(token);
-                Role role = jwtUtil.extractRole(token);
+            Optional<Claims> optionalClaims = jwtUtil.isTokenValid(token);
+            if (optionalClaims.isPresent()) {
+                Claims claims = optionalClaims.get();
+                String userId = jwtUtil.extractUserId(claims);
+                long issuedAt = jwtUtil.extractIssuedAtEpochSeconds(claims);
 
-                var authorities = List.of(new SimpleGrantedAuthority(role.toAuthority()));
-
-                var authentication = new UsernamePasswordAuthenticationToken(userId, null, authorities);
-                SecurityContextHolder.getContext().setAuthentication(authentication);
+                if (!tokenBlacklistService.isRevoked(userId, issuedAt)) {
+                    Role role = jwtUtil.extractRole(claims);
+                    var authorities = List.of(new SimpleGrantedAuthority(role.toAuthority()));
+                    var authentication = new UsernamePasswordAuthenticationToken(userId, null, authorities);
+                    SecurityContextHolder.getContext().setAuthentication(authentication);
+                }
             }
         }
 

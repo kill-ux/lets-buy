@@ -6,10 +6,12 @@ import java.time.Instant;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.redis.core.StringRedisTemplate;
+import org.springframework.stereotype.Service;
 
 /**
  * TokenBlacklistService
  */
+@Service 
 public class TokenBlacklistService {
 
     private final StringRedisTemplate redisTemplate;
@@ -29,6 +31,15 @@ public class TokenBlacklistService {
     public void revokeAllTokensForUser(String userId) {
         long nowEpochSeconds = Instant.now().getEpochSecond();
         redisTemplate.opsForValue().set(key(userId), String.valueOf(nowEpochSeconds), Duration.ofMillis(expirationMs));
+    }
+
+    public boolean isRevoked(String userId, long tokenIssuedAtEpochSeconds) {
+        String value = redisTemplate.opsForValue().get(key(userId));
+        if (value == null) {
+            return false;
+        }
+        long revokedAtEpochSeconds = Long.parseLong(value);
+        return tokenIssuedAtEpochSeconds <= revokedAtEpochSeconds;
     }
 
 }

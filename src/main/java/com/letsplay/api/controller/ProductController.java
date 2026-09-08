@@ -9,7 +9,7 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.letsplay.api.exeptions.ResourceNotFoundException;
+import com.letsplay.api.exceptions.ResourceNotFoundException;
 import com.letsplay.api.model.Product;
 import com.letsplay.api.service.ProductService;
 

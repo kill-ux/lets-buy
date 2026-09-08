@@ -1,7 +1,7 @@
 package com.letsplay.api.controller;
 
 import com.letsplay.api.dto.UserResponseDTO;
-import com.letsplay.api.exeptions.ResourceNotFoundException;
+import com.letsplay.api.exceptions.ResourceNotFoundException;
 import com.letsplay.api.model.User;
 import com.letsplay.api.service.UserService;
 import jakarta.validation.Valid;

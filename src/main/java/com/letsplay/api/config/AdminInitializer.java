@@ -25,6 +25,7 @@ public class AdminInitializer implements CommandLineRunner {
     @Value("${app.admin.password}")
     private String adminPassword;
 
+    @Autowired 
     public AdminInitializer(UserRepository userRepository, PasswordEncoder passwordEncoder) {
         this.userRepository = userRepository;
         this.passwordEncoder = passwordEncoder;
@@ -32,7 +33,7 @@ public class AdminInitializer implements CommandLineRunner {
 
     @Override
     public void run(String... args) throws Exception {
-        boolean adminExists = userRepository.existsByRole(Role.ADMIN.name());
+        boolean adminExists = userRepository.existsByRole(Role.ADMIN);
         if (!adminExists) {
             User admin = new User();
             admin.setName("Admin");

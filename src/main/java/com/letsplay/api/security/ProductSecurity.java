@@ -3,7 +3,7 @@ package com.letsplay.api.security;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import com.letsplay.api.exeptions.ResourceNotFoundException;
+import com.letsplay.api.exceptions.ResourceNotFoundException;
 import com.letsplay.api.repository.ProductRepository;
 
 /**

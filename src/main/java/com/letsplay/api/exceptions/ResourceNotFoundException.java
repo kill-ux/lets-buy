@@ -1,4 +1,4 @@
-package com.letsplay.api.exeptions;
+package com.letsplay.api.exceptions;
 
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.http.HttpStatus;
